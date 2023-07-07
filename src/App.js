@@ -262,7 +262,7 @@ function App() {
           <TabPanels>
             <TabPanel>
               <Grid numItemsMd={2} numItemsLg={2} className="gap-6 mt-6">
-                <Card>
+                <Card className='flex flex-col justify-between'>
                   <Title>Users</Title>
                   <LineChart
                     className="mt-6"
@@ -274,7 +274,7 @@ function App() {
                     yAxisWidth={40}
                   />
                 </Card>
-                <Card>
+                <Card className='flex flex-col justify-between'>
                   <Title>Total Content Views</Title>
                   <AreaChart
                     className="h-72 mt-4"
@@ -293,7 +293,7 @@ function App() {
           <TabPanels>
             <TabPanel>
               <Grid numItemsMd={2} numItemsLg={2} className="gap-6 mt-6">
-                <Card>
+                <Card className='flex flex-col justify-between'>
                   <Title>Content Popularity</Title>
                   <Flex className="mt-4">
                     <Text>
@@ -305,7 +305,7 @@ function App() {
                   </Flex>
                   <BarList data={data} className="mt-2" />
                 </Card>
-                <Card>
+                <Card className='flex flex-col justify-between'>
                   <Title>Devices</Title>
                   <DonutChart
                     className="mt-6"
@@ -331,7 +331,7 @@ function App() {
           <TabPanels>
             <TabPanel>
               <Grid numItemsMd={2} numItemsLg={2} className="gap-6 mt-6">
-                <Card>
+                <Card className='flex flex-col justify-between'>
                   <Title>Groups Activity</Title>
                   <BarChart
                     className="mt-6"
@@ -340,10 +340,10 @@ function App() {
                     categories={["Views", "Comments", "Likes"]}
                     colors={["blue", "indigo", "cyan"]}
                     yAxisWidth={48}
-                    // showLegend={false}
+                  // showLegend={false}
                   />
                 </Card>
-                <Card>
+                <Card className='flex flex-col justify-between'>
                   <Title>User Generated Content</Title>
                   <AreaChart
                     className="h-72 mt-4"
