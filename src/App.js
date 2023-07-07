@@ -1,6 +1,6 @@
 import logo from './logo.svg';
 import {
-  Card, Text, Metric, Title, LineChart, DonutChart, AreaChart, BarChart, Grid, Tab, TabList, TabGroup, TabPanel, TabPanels, Flex, BarList, Bold, Legend, SelectItem, Select, Subtitle
+  Card, Text, Metric, Title, LineChart, DonutChart, AreaChart, BarChart, Grid, TabGroup, TabPanel, TabPanels, Flex, BarList, Bold, Legend, SelectItem, Select
 } from "@tremor/react";
 import './App.css';
 
