@@ -205,9 +205,12 @@ function App() {
 
       <div class="container mx-auto">
 
-        <Grid numItemsMd={3} numItemsLg={3} className="gap-6 mt-6">
-          <div>
-            <Text className='mb-1'>Date Range</Text>
+        <Grid numItemsMd={3} numItemsLg={3} className="gap-6 mt-6  border-b pb-4">
+          <div className='flex items-center'>
+            &nbsp;
+          </div>
+          <div className='flex items-center'>
+            <Text className='mr-2 flex-none'>Date Range</Text>
             <Select value="1">
               <SelectItem value="1">
                 Last 7 Days
@@ -232,8 +235,8 @@ function App() {
               </SelectItem>
             </Select>
           </div>
-          <div>
-            <Text className='mb-1'>Workspace</Text>
+          <div className='flex items-center'>
+            <Text className='mr-2 flex-none'>Workspace</Text>
             <Select value="1">
               <SelectItem value="1">
                 Engage
