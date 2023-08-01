@@ -16,49 +16,6 @@ import { searchTerms } from "./data/searchTerms";
 import { groups } from "./data/groups";
 import './App.css';
 
-// const data = [
-//   {
-//     Month: "Jan 21",
-//     Sales: 2890,
-//     Profit: 2400,
-//     Customers: 4938,
-//     icon: function Icon() {
-//       return (
-//         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-//           <path fillRule="evenodd" clipRule="evenodd" d="M5.08404 2.57991C5.84727 2.26299 6.66554 2.09985 7.49195 2.09985C8.31836 2.09985 9.13663 2.26299 9.89986 2.57991C10.6631 2.89682 11.3562 3.36129 11.9396 3.94666L11.9428 3.94994L12.0001 4.00793L12.0573 3.94994L12.0606 3.94666C12.6439 3.36129 13.3371 2.89682 14.1003 2.57991C14.8635 2.26299 15.6818 2.09985 16.5082 2.09985C17.3346 2.09985 18.1529 2.26299 18.9161 2.57991C19.6791 2.89671 20.372 3.36097 20.9552 3.94606C23.4521 6.44364 23.5077 10.5732 20.549 13.5874L20.5426 13.5938L12.6938 21.4426C12.5098 21.6266 12.2603 21.73 12.0001 21.73C11.7399 21.73 11.4903 21.6266 11.3063 21.4426L3.45115 13.5874C0.492464 10.5733 0.548014 6.44363 3.04493 3.94605C3.62814 3.36096 4.32108 2.89671 5.08404 2.57991Z" fill="#D12E3C" />
-//         </svg>
-//       );
-//     },
-//   },
-//   {
-//     Month: "Feb 21",
-//     Sales: 1890,
-//     Profit: 1398,
-//     Customers: 2938,
-//     icon: function Icon() {
-//       return (
-//         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-//           <path fillRule="evenodd" clipRule="evenodd" d="M5.08404 2.57991C5.84727 2.26299 6.66554 2.09985 7.49195 2.09985C8.31836 2.09985 9.13663 2.26299 9.89986 2.57991C10.6631 2.89682 11.3562 3.36129 11.9396 3.94666L11.9428 3.94994L12.0001 4.00793L12.0573 3.94994L12.0606 3.94666C12.6439 3.36129 13.3371 2.89682 14.1003 2.57991C14.8635 2.26299 15.6818 2.09985 16.5082 2.09985C17.3346 2.09985 18.1529 2.26299 18.9161 2.57991C19.6791 2.89671 20.372 3.36097 20.9552 3.94606C23.4521 6.44364 23.5077 10.5732 20.549 13.5874L20.5426 13.5938L12.6938 21.4426C12.5098 21.6266 12.2603 21.73 12.0001 21.73C11.7399 21.73 11.4903 21.6266 11.3063 21.4426L3.45115 13.5874C0.492464 10.5733 0.548014 6.44363 3.04493 3.94605C3.62814 3.36096 4.32108 2.89671 5.08404 2.57991Z" fill="#D12E3C" />
-//         </svg>
-//       );
-//     },
-//   },
-//   // ...
-//   {
-//     Month: "Jul 21",
-//     Sales: 3490,
-//     Profit: 4300,
-//     Customers: 2345,
-//     icon: function Icon() {
-//       return (
-//         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-//           <path fillRule="evenodd" clipRule="evenodd" d="M5.08404 2.57991C5.84727 2.26299 6.66554 2.09985 7.49195 2.09985C8.31836 2.09985 9.13663 2.26299 9.89986 2.57991C10.6631 2.89682 11.3562 3.36129 11.9396 3.94666L11.9428 3.94994L12.0001 4.00793L12.0573 3.94994L12.0606 3.94666C12.6439 3.36129 13.3371 2.89682 14.1003 2.57991C14.8635 2.26299 15.6818 2.09985 16.5082 2.09985C17.3346 2.09985 18.1529 2.26299 18.9161 2.57991C19.6791 2.89671 20.372 3.36097 20.9552 3.94606C23.4521 6.44364 23.5077 10.5732 20.549 13.5874L20.5426 13.5938L12.6938 21.4426C12.5098 21.6266 12.2603 21.73 12.0001 21.73C11.7399 21.73 11.4903 21.6266 11.3063 21.4426L3.45115 13.5874C0.492464 10.5733 0.548014 6.44363 3.04493 3.94605C3.62814 3.36096 4.32108 2.89671 5.08404 2.57991Z" fill="#D12E3C" />
-//         </svg>
-//       );
-//     },
-//   },
-// ];
-
 const dataFormatter = (number) => `${Intl.NumberFormat("uk").format(number).toString()}%`;
 const valueFormatter = (number) => `${Intl.NumberFormat("uk").format(number).toString()}`;
 
@@ -410,7 +367,7 @@ function App() {
                       colors={[`${item.graphColor}`]}
                       startEndOnly={true}
                       showLegend={false}
-                      showXAxis={week ? true : false}
+                      showXAxis={false}
                       showYAxis={false}
                       showGridLines={false}
                       curveType="natural"
@@ -465,7 +422,7 @@ function App() {
 
             </TabPanel>
             <TabPanel>
-              <Grid numItemsMd={2} numItemsLg={3} className="gap-6 mt-6">
+              <Grid numItemsMd={2} numItemsLg={3} className="gap-6 mt-6 border-b pb-6">
 
                 <div className='flex items-center'>
                   <Text className='mr-2 flex-none'>Show Inisghts for:</Text>
@@ -510,6 +467,9 @@ function App() {
 
                 </div>
                 <div className='flex items-center'>
+
+                </div>
+                <div className='flex items-center'>
                   <Text className='mr-2 flex-none'>Compare Against:</Text>
 
                   <DateRangePicker
@@ -551,9 +511,7 @@ function App() {
                   </DateRangePicker>
 
                 </div>
-                <div className='flex items-center'>
-
-                </div>
+                
               </Grid>
               <Grid numItemsMd={2} numItemsLg={3} className="gap-6 mt-6 border-b pb-4 mb-4">
 
