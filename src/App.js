@@ -1,312 +1,259 @@
+import React, { Fragment, useState } from "react";
+
 import logo from './logo.svg';
 import {
-  Card, Text, Metric, Title, LineChart, DonutChart, AreaChart, BarChart, Grid, TabGroup, TabPanel, TabPanels, Flex, BarList, Bold, Legend, SelectItem, Select
+  Button, TextInput, Card, Text, Metric, Title, LineChart, DonutChart, AreaChart, BarChart, Grid, TabGroup, Tab, TabList, TabPanel, TabPanels, Flex, BarList, Bold, Legend, SelectItem, Select, DateRangePicker, DateRangePickerItem, Icon, MultiSelect, MultiSelectItem, BadgeDelta
 } from "@tremor/react";
+import { Dialog, Transition } from "@headlessui/react";
+import { ExpandIcon, SearchIcon } from 'lucide-react';
+import { popularContentDay, popularContentWeek } from "./data/popularContent";
+import { userLoginsWeek, userLoginsDay } from "./data/userLogins";
+import { devices } from "./data/devices";
+import { viewsDay, viewsWeek, viewsDay2, viewsWeek2 } from "./data/views";
+import { blocks, blocksViewsDay, blocksViewsWeek } from "./data/blocks";
+import { searchTerms } from "./data/searchTerms";
+// import { ugc } from "./data/ugc";
+import { groups } from "./data/groups";
 import './App.css';
 
-const chartdata = [
-  {
-    year: "Mon",
-    "Registered": 0,
-    "Logged In": 22,
-  },
-  {
-    year: "Tue",
-    "Registered": 1,
-    "Logged In": 19,
-  },
-  {
-    year: "Wed",
-    "Registered": 2,
-    "Logged In": 10,
-  },
-  {
-    year: "Thur",
-    "Registered": 0,
-    "Logged In": 22,
-  },
-  {
-    year: "Fri",
-    "Registered": 1,
-    "Logged In": 34,
-  },
-];
-
-const devices = [
-  {
-    name: "iOS",
-    sales: 34,
-  },
-  {
-    name: "Android",
-    sales: 42,
-  },
-  {
-    name: "WebApp",
-    sales: 24,
-  }
-];
-
-const data = [
-  {
-    name: "Celebrate Our Team's Accomplishments at the Annual Awards Banquet",
-    value: 456,
-    href: "#",
-    icon: function Icon() {
-      return (
-        <svg width="20" height="20" viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg" className="mr-2.5 fill-slate-500">
-          <path fill="#203554" fill-rule="evenodd" clip-rule="evenodd" d="M13.8602 6.86016C15.6915 5.02883 18.1753 4 20.7652 4H48.6395C49.4899 4 50.3055 4.33783 50.9068 4.93916L68.9432 22.9756C69.5445 23.5769 69.8823 24.3925 69.8823 25.2429V66.2348C69.8823 68.8247 68.8535 71.3085 67.0222 73.1398C65.1909 74.9712 62.7071 76 60.1172 76H20.7652C18.1753 76 15.6915 74.9712 13.8602 73.1398C12.0288 71.3085 11 68.8247 11 66.2348V13.7652C11 11.1753 12.0288 8.69149 13.8602 6.86016ZM20.7652 10.4129C19.8761 10.4129 19.0235 10.7661 18.3948 11.3948C17.7662 12.0234 17.413 12.8761 17.413 13.7652V66.2348C17.413 67.1239 17.7662 67.9766 18.3948 68.6052C19.0235 69.2339 19.8761 69.5871 20.7652 69.5871H60.1172C61.0062 69.5871 61.8589 69.2339 62.4875 68.6052C63.1162 67.9766 63.4694 67.1239 63.4694 66.2348V26.5711L47.3113 10.4129H20.7652Z" />
-          <path fill="#203554" fill-rule="evenodd" clip-rule="evenodd" d="M46.9995 4C48.7704 4 50.206 5.43558 50.206 7.20647V23.6761H66.6755C68.4464 23.6761 69.882 25.1117 69.882 26.8826C69.882 28.6535 68.4464 30.0891 66.6755 30.0891H46.9995C45.2286 30.0891 43.7931 28.6535 43.7931 26.8826V7.20647C43.7931 5.43558 45.2286 4 46.9995 4Z" />
-        </svg>
-      );
-    },
-  },
-  {
-    name: "New Company Wellness Program",
-    value: 351,
-    href: "#",
-    icon: function Icon() {
-      return (
-        <svg width="20" height="20" viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg" className="mr-2.5 fill-slate-500">
-          <path fill="#203554" fill-rule="evenodd" clip-rule="evenodd" d="M13.8602 6.86016C15.6915 5.02883 18.1753 4 20.7652 4H48.6395C49.4899 4 50.3055 4.33783 50.9068 4.93916L68.9432 22.9756C69.5445 23.5769 69.8823 24.3925 69.8823 25.2429V66.2348C69.8823 68.8247 68.8535 71.3085 67.0222 73.1398C65.1909 74.9712 62.7071 76 60.1172 76H20.7652C18.1753 76 15.6915 74.9712 13.8602 73.1398C12.0288 71.3085 11 68.8247 11 66.2348V13.7652C11 11.1753 12.0288 8.69149 13.8602 6.86016ZM20.7652 10.4129C19.8761 10.4129 19.0235 10.7661 18.3948 11.3948C17.7662 12.0234 17.413 12.8761 17.413 13.7652V66.2348C17.413 67.1239 17.7662 67.9766 18.3948 68.6052C19.0235 69.2339 19.8761 69.5871 20.7652 69.5871H60.1172C61.0062 69.5871 61.8589 69.2339 62.4875 68.6052C63.1162 67.9766 63.4694 67.1239 63.4694 66.2348V26.5711L47.3113 10.4129H20.7652Z" />
-          <path fill="#203554" fill-rule="evenodd" clip-rule="evenodd" d="M46.9995 4C48.7704 4 50.206 5.43558 50.206 7.20647V23.6761H66.6755C68.4464 23.6761 69.882 25.1117 69.882 26.8826C69.882 28.6535 68.4464 30.0891 66.6755 30.0891H46.9995C45.2286 30.0891 43.7931 28.6535 43.7931 26.8826V7.20647C43.7931 5.43558 45.2286 4 46.9995 4Z" />
-        </svg>
-      );
-    },
-  },
-  {
-    name: "Latest News",
-    value: 271,
-    href: "#",
-    icon: function Icon() {
-      return (
-        <svg fill="#203554" width="20" height="20" viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg" className="mr-2.5 fill-slate-500">
-          <path fill="#203554" fill-rule="evenodd" clip-rule="evenodd" d="M4 7.6C4 5.61177 5.61177 4 7.6 4H32.8C34.7882 4 36.4 5.61177 36.4 7.6V32.8C36.4 34.7882 34.7882 36.4 32.8 36.4H7.6C5.61177 36.4 4 34.7882 4 32.8V7.6ZM11.2 11.2V29.2H29.2V11.2H11.2ZM43.6 11.2C43.6 9.21177 45.2118 7.6 47.2 7.6H72.4C74.3882 7.6 76 9.21177 76 11.2C76 13.1882 74.3882 14.8 72.4 14.8H47.2C45.2118 14.8 43.6 13.1882 43.6 11.2ZM43.6 29.2C43.6 27.2118 45.2118 25.6 47.2 25.6H72.4C74.3882 25.6 76 27.2118 76 29.2C76 31.1882 74.3882 32.8 72.4 32.8H47.2C45.2118 32.8 43.6 31.1882 43.6 29.2ZM4 47.2C4 45.2118 5.61177 43.6 7.6 43.6H32.8C34.7882 43.6 36.4 45.2118 36.4 47.2V72.4C36.4 74.3882 34.7882 76 32.8 76H7.6C5.61177 76 4 74.3882 4 72.4V47.2ZM11.2 50.8V68.8H29.2V50.8H11.2ZM43.6 50.8C43.6 48.8118 45.2118 47.2 47.2 47.2H72.4C74.3882 47.2 76 48.8118 76 50.8C76 52.7882 74.3882 54.4 72.4 54.4H47.2C45.2118 54.4 43.6 52.7882 43.6 50.8ZM43.6 68.8C43.6 66.8118 45.2118 65.2 47.2 65.2H72.4C74.3882 65.2 76 66.8118 76 68.8C76 70.7882 74.3882 72.4 72.4 72.4H47.2C45.2118 72.4 43.6 70.7882 43.6 68.8Z" />
-        </svg>
-      );
-    },
-  },
-  {
-    name: "New Company Wellness Program",
-    value: 191,
-    href: "#",
-    icon: function Icon() {
-      return (
-        <svg width="20" height="20" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg" className="mr-2.5 fill-slate-500">
-          <path fill-rule="evenodd" clip-rule="evenodd" d="M14.8648 11.7143C13.1251 11.7143 11.7148 13.1246 11.7148 14.8643V65.1357C11.7148 66.8754 13.1251 68.2857 14.8648 68.2857H65.1362C66.8759 68.2857 68.2862 66.8754 68.2862 65.1357V14.8643C68.2862 13.1246 66.8759 11.7143 65.1362 11.7143H14.8648ZM4.00051 14.8643C4.00051 8.86411 8.86462 4 14.8648 4H65.1362C71.1364 4 76.0005 8.86411 76.0005 14.8643V65.1357C76.0005 71.1359 71.1364 76 65.1362 76H14.8648C8.86462 76 4.00051 71.1359 4.00051 65.1357V14.8643Z" fill="#203554" />
-          <path fill-rule="evenodd" clip-rule="evenodd" d="M23.9272 4C26.0574 4 27.7843 5.7269 27.7843 7.85714V72.1429C27.7843 74.2731 26.0574 76 23.9272 76C21.797 76 20.0701 74.2731 20.0701 72.1429V7.85714C20.0701 5.7269 21.797 4 23.9272 4Z" fill="#203554" />
-          <path fill-rule="evenodd" clip-rule="evenodd" d="M56.0732 4C58.2034 4 59.9303 5.7269 59.9303 7.85714V72.1429C59.9303 74.2731 58.2034 76 56.0732 76C53.9429 76 52.216 74.2731 52.216 72.1429V7.85714C52.216 5.7269 53.9429 4 56.0732 4Z" fill="#203554" />
-          <path fill-rule="evenodd" clip-rule="evenodd" d="M4.0002 40.0031C4.0002 37.8729 5.7271 36.146 7.85734 36.146H72.143C74.2733 36.146 76.0002 37.8729 76.0002 40.0031C76.0002 42.1334 74.2733 43.8603 72.143 43.8603H7.85734C5.7271 43.8603 4.0002 42.1334 4.0002 40.0031Z" fill="#203554" />
-          <path fill-rule="evenodd" clip-rule="evenodd" d="M4.00051 23.9336C4.00051 21.8034 5.72741 20.0765 7.85765 20.0765H23.9291C26.0593 20.0765 27.7862 21.8034 27.7862 23.9336C27.7862 26.0638 26.0593 27.7907 23.9291 27.7907H7.85765C5.72741 27.7907 4.00051 26.0638 4.00051 23.9336Z" fill="#203554" />
-          <path fill-rule="evenodd" clip-rule="evenodd" d="M4.00051 56.0727C4.00051 53.9424 5.72741 52.2155 7.85765 52.2155H23.9291C26.0593 52.2155 27.7862 53.9424 27.7862 56.0727C27.7862 58.2029 26.0593 59.9298 23.9291 59.9298H7.85765C5.72741 59.9298 4.00051 58.2029 4.00051 56.0727Z" fill="#203554" />
-          <path fill-rule="evenodd" clip-rule="evenodd" d="M52.216 56.0727C52.216 53.9424 53.9429 52.2155 56.0732 52.2155H72.1446C74.2749 52.2155 76.0018 53.9424 76.0018 56.0727C76.0018 58.2029 74.2749 59.9298 72.1446 59.9298H56.0732C53.9429 59.9298 52.216 58.2029 52.216 56.0727Z" fill="#203554" />
-          <path fill-rule="evenodd" clip-rule="evenodd" d="M52.216 23.9336C52.216 21.8034 53.9429 20.0765 56.0732 20.0765H72.1446C74.2749 20.0765 76.0018 21.8034 76.0018 23.9336C76.0018 26.0638 74.2749 27.7907 72.1446 27.7907H56.0732C53.9429 27.7907 52.216 26.0638 52.216 23.9336Z" fill="#203554" />
-        </svg>
-      );
-    },
-  },
-  {
-    name: "Complete Performance Reviews by Friday",
-    value: 91,
-    href: "#",
-    icon: function Icon() {
-      return (
-        <svg width="20" height="20" viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg" className="mr-2.5 fill-slate-500">
-          <path fill="#203554" fill-rule="evenodd" clip-rule="evenodd" d="M13.8602 6.86016C15.6915 5.02883 18.1753 4 20.7652 4H48.6395C49.4899 4 50.3055 4.33783 50.9068 4.93916L68.9432 22.9756C69.5445 23.5769 69.8823 24.3925 69.8823 25.2429V66.2348C69.8823 68.8247 68.8535 71.3085 67.0222 73.1398C65.1909 74.9712 62.7071 76 60.1172 76H20.7652C18.1753 76 15.6915 74.9712 13.8602 73.1398C12.0288 71.3085 11 68.8247 11 66.2348V13.7652C11 11.1753 12.0288 8.69149 13.8602 6.86016ZM20.7652 10.4129C19.8761 10.4129 19.0235 10.7661 18.3948 11.3948C17.7662 12.0234 17.413 12.8761 17.413 13.7652V66.2348C17.413 67.1239 17.7662 67.9766 18.3948 68.6052C19.0235 69.2339 19.8761 69.5871 20.7652 69.5871H60.1172C61.0062 69.5871 61.8589 69.2339 62.4875 68.6052C63.1162 67.9766 63.4694 67.1239 63.4694 66.2348V26.5711L47.3113 10.4129H20.7652Z" />
-          <path fill="#203554" fill-rule="evenodd" clip-rule="evenodd" d="M46.9995 4C48.7704 4 50.206 5.43558 50.206 7.20647V23.6761H66.6755C68.4464 23.6761 69.882 25.1117 69.882 26.8826C69.882 28.6535 68.4464 30.0891 66.6755 30.0891H46.9995C45.2286 30.0891 43.7931 28.6535 43.7931 26.8826V7.20647C43.7931 5.43558 45.2286 4 46.9995 4Z" />
-        </svg>
-      );
-    },
-  },
-];
-
-const views = [
-  {
-    date: "Mon",
-    Views: 35,
-  },
-  {
-    date: "Tue",
-    Views: 76,
-  },
-  {
-    date: "Wed",
-    Views: 4,
-  },
-  {
-    date: "Thur",
-    Views: 4,
-  },
-  {
-    date: "Fri",
-    Views: 65,
-  },
-];
-
-const ugc = [
-  {
-    date: "Mon",
-    Views: 3,
-  },
-  {
-    date: "Tue",
-    Views: 9,
-  },
-  {
-    date: "Wed",
-    Views: 1,
-  },
-  {
-    date: "Thur",
-    Views: 4,
-  },
-  {
-    date: "Fri",
-    Views: 0,
-  },
-];
-
-const barchart = [
-  {
-    name: "Belfast",
-    "Views": 540,
-    "Comments": 32,
-    "Likes": 56,
-  },
-  {
-    name: "London",
-    "Views": 400,
-    "Comments": 9,
-    "Likes": 18,
-  },
-  {
-    name: "Hong Kong",
-    "Views": 320,
-    "Comments": 26,
-    "Likes": 10,
-  },
-];
+// const data = [
+//   {
+//     Month: "Jan 21",
+//     Sales: 2890,
+//     Profit: 2400,
+//     Customers: 4938,
+//     icon: function Icon() {
+//       return (
+//         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+//           <path fillRule="evenodd" clipRule="evenodd" d="M5.08404 2.57991C5.84727 2.26299 6.66554 2.09985 7.49195 2.09985C8.31836 2.09985 9.13663 2.26299 9.89986 2.57991C10.6631 2.89682 11.3562 3.36129 11.9396 3.94666L11.9428 3.94994L12.0001 4.00793L12.0573 3.94994L12.0606 3.94666C12.6439 3.36129 13.3371 2.89682 14.1003 2.57991C14.8635 2.26299 15.6818 2.09985 16.5082 2.09985C17.3346 2.09985 18.1529 2.26299 18.9161 2.57991C19.6791 2.89671 20.372 3.36097 20.9552 3.94606C23.4521 6.44364 23.5077 10.5732 20.549 13.5874L20.5426 13.5938L12.6938 21.4426C12.5098 21.6266 12.2603 21.73 12.0001 21.73C11.7399 21.73 11.4903 21.6266 11.3063 21.4426L3.45115 13.5874C0.492464 10.5733 0.548014 6.44363 3.04493 3.94605C3.62814 3.36096 4.32108 2.89671 5.08404 2.57991Z" fill="#D12E3C" />
+//         </svg>
+//       );
+//     },
+//   },
+//   {
+//     Month: "Feb 21",
+//     Sales: 1890,
+//     Profit: 1398,
+//     Customers: 2938,
+//     icon: function Icon() {
+//       return (
+//         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+//           <path fillRule="evenodd" clipRule="evenodd" d="M5.08404 2.57991C5.84727 2.26299 6.66554 2.09985 7.49195 2.09985C8.31836 2.09985 9.13663 2.26299 9.89986 2.57991C10.6631 2.89682 11.3562 3.36129 11.9396 3.94666L11.9428 3.94994L12.0001 4.00793L12.0573 3.94994L12.0606 3.94666C12.6439 3.36129 13.3371 2.89682 14.1003 2.57991C14.8635 2.26299 15.6818 2.09985 16.5082 2.09985C17.3346 2.09985 18.1529 2.26299 18.9161 2.57991C19.6791 2.89671 20.372 3.36097 20.9552 3.94606C23.4521 6.44364 23.5077 10.5732 20.549 13.5874L20.5426 13.5938L12.6938 21.4426C12.5098 21.6266 12.2603 21.73 12.0001 21.73C11.7399 21.73 11.4903 21.6266 11.3063 21.4426L3.45115 13.5874C0.492464 10.5733 0.548014 6.44363 3.04493 3.94605C3.62814 3.36096 4.32108 2.89671 5.08404 2.57991Z" fill="#D12E3C" />
+//         </svg>
+//       );
+//     },
+//   },
+//   // ...
+//   {
+//     Month: "Jul 21",
+//     Sales: 3490,
+//     Profit: 4300,
+//     Customers: 2345,
+//     icon: function Icon() {
+//       return (
+//         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+//           <path fillRule="evenodd" clipRule="evenodd" d="M5.08404 2.57991C5.84727 2.26299 6.66554 2.09985 7.49195 2.09985C8.31836 2.09985 9.13663 2.26299 9.89986 2.57991C10.6631 2.89682 11.3562 3.36129 11.9396 3.94666L11.9428 3.94994L12.0001 4.00793L12.0573 3.94994L12.0606 3.94666C12.6439 3.36129 13.3371 2.89682 14.1003 2.57991C14.8635 2.26299 15.6818 2.09985 16.5082 2.09985C17.3346 2.09985 18.1529 2.26299 18.9161 2.57991C19.6791 2.89671 20.372 3.36097 20.9552 3.94606C23.4521 6.44364 23.5077 10.5732 20.549 13.5874L20.5426 13.5938L12.6938 21.4426C12.5098 21.6266 12.2603 21.73 12.0001 21.73C11.7399 21.73 11.4903 21.6266 11.3063 21.4426L3.45115 13.5874C0.492464 10.5733 0.548014 6.44363 3.04493 3.94605C3.62814 3.36096 4.32108 2.89671 5.08404 2.57991Z" fill="#D12E3C" />
+//         </svg>
+//       );
+//     },
+//   },
+// ];
 
 const dataFormatter = (number) => `${Intl.NumberFormat("uk").format(number).toString()}%`;
+const valueFormatter = (number) => `${Intl.NumberFormat("uk").format(number).toString()}`;
 
 function App() {
+
+  const [week, setWeek] = useState('false');
+
+  const [isOpen, setIsOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const filteredpages = popularContentDay.filter((item) =>
+    item.name.toLowerCase().includes(searchQuery.toLowerCase()),
+  );
+  const closeModal = () => setIsOpen(false);
+
+  const openModal = () => setIsOpen(true);
+
+  const [value, setValue] = useState({
+    from: new Date(2023, 1, 1),
+    to: new Date(),
+  });
+
+  // get yyyy,mm,dd
+  const today = new Date();
+  let dd = today.getDate();
+
+  let mm = today.getMonth() + 1;
+  let yyyy = today.getFullYear();
+  if (dd < 10) {
+    dd = '0' + dd;
+  }
+
+  if (mm < 10) {
+    mm = '0' + mm;
+  }
+  // yyyy,mm,dd
+
+  // if (week) {
+  //   alert('test');
+  // }
+
+
+  function handleWeekClick() {
+    setWeek(true);
+  };
+
+  function handleDayClick() {
+    setWeek(false);
+
+    // window.location.reload(false);
+  };
+
+  function handleTodayClick() {
+    setWeek(false);
+
+    viewsDay.length = 16;
+    popularContentDay.length = 16;
+    userLoginsDay.length = 16;
+    blocksViewsDay.length = 16;
+
+  };
+
   return (
     <div className="App">
-      <header className="App-header bg-white p-4 mb-4">
-        <div class="container mx-auto flex items-center">
+      <header className="App-header bg-white p-4 mb-4 px-4">
+        <div className="container mx-auto flex items-center">
           <img src={logo} className="App-logo mr-24" alt="logo" />
-          <p className="text-gray-500 font-medium text-sm mr-8">Home</p>
-          <p className="text-gray-500 font-medium text-sm mr-8">Org Settings</p>
+          <p className="text-gray-500 font-medium text-sm mr-8 hidden sm:inline-block">Home</p>
+          <p className="text-gray-500 font-medium text-sm mr-8 hidden sm:inline-block">Org Settings</p>
           <p className="text-gray-500 font-medium text-sm mr-8 active-nav-item">Insights</p>
-          <p className="text-gray-500 font-medium text-sm mr-8">Locker Management</p>
-          <p className="text-gray-500 font-medium text-sm mr-8">Planner</p>
+          <p className="text-gray-500 font-medium text-sm mr-8 hidden sm:inline-block">Locker Management</p>
+          <p className="text-gray-500 font-medium text-sm mr-8 hidden sm:inline-block">Planner</p>
         </div>
       </header>
 
-      <div class="container mx-auto">
-
-        <Grid numItemsMd={3} numItemsLg={3} className="gap-6 mt-6  border-b pb-4">
-          <div className='flex items-center'>
-            &nbsp;
-          </div>
-          <div className='flex items-center'>
-            <Text className='mr-2 flex-none'>Date Range</Text>
-            <Select value="1">
-              <SelectItem value="1">
-                Last 7 Days
-              </SelectItem>
-              <SelectItem value="2">
-                Today
-              </SelectItem>
-              <SelectItem value="3">
-                Last Week
-              </SelectItem>
-              <SelectItem value="4">
-                Last Month
-              </SelectItem>
-              <SelectItem value="5">
-                Last 3 Months
-              </SelectItem>
-              <SelectItem value="6">
-                Lifetime
-              </SelectItem>
-              <SelectItem value="7">
-                Custom Date
-              </SelectItem>
-            </Select>
-          </div>
-          <div className='flex items-center'>
-            <Text className='mr-2 flex-none'>Workspace</Text>
-            <Select value="1">
-              <SelectItem value="1">
-                Engage
-              </SelectItem>
-              <SelectItem value="2">
-                Test Environment
-              </SelectItem>
-            </Select>
-          </div>
-        </Grid>
-        <Grid numItemsMd={3} numItemsLg={3} className="gap-6 mt-6">
-          <Card className="">
-            <Text>Users</Text>
-            <Metric>21,405</Metric>
-          </Card>
-          <Card className="">
-            <Text>Content Items</Text>
-            <Metric>11,002</Metric>
-          </Card>
-          <Card className="">
-            <Text>Something Else</Text>
-            <Metric>23</Metric>
-          </Card>
-        </Grid>
-        <TabGroup className="mt-6">
+      <div className="container mx-auto px-4">
+        <TabGroup>
+          <TabList className="mt-8">
+            <Tab>Overview</Tab>
+            <Tab>Compare</Tab>
+            <Tab>Groups</Tab>
+            <Tab>Reports</Tab>
+            <Tab>Search</Tab>
+            <Tab>Notifications</Tab>
+            <Tab>Activity Feed</Tab>
+          </TabList>
           <TabPanels>
             <TabPanel>
-              <Grid numItemsMd={2} numItemsLg={2} className="gap-6 mt-6">
-                <Card className='flex flex-col justify-between'>
-                  <Title>Users</Title>
+              <Grid numItemsMd={3} numItemsLg={3} className="gap-6 mt-6  border-b pb-4">
+
+                <div className='flex items-center'>
+                  <Text className='mr-2 flex-none'>Show Inisghts for</Text>
+
+                  {/* <DateRangePicker className="max-w-sm mx-auto" value="ytd"
+                    onValueChange={setValue}
+                  >
+                    <DateRangePickerItem key="ytd" value="ytd" from={new Date().getDate()}>
+                      Today
+                    </DateRangePickerItem>
+                    <DateRangePickerItem
+                      key="half"
+                      value="half"
+                      from={new Date().getDate() - 2}
+                      to={new Date().getDate() - 1}
+                    >
+                      Yesterday
+                    </DateRangePickerItem>
+                  </DateRangePicker> */}
+
+                  <DateRangePicker
+                    className="max-w-md mx-auto"
+                    value={value}
+                    onValueChange={setValue}
+                    selectPlaceholder="Select"
+                    color="rose"
+                  >
+
+                    <DateRangePickerItem key="today" value="today" from={new Date()} to={new Date()} onClick={handleTodayClick}>
+                      Today
+                    </DateRangePickerItem>
+                    <DateRangePickerItem key="yesterday" value="yesterday" from={new Date(yyyy, mm - 1, dd - 1)} to={new Date(yyyy, mm - 1, dd - 1)} onClick={handleDayClick}>
+                      Yesterday
+                    </DateRangePickerItem>
+                    <DateRangePickerItem key="7days" value="7days" from={new Date(yyyy, mm - 1, dd - 7)} onClick={handleWeekClick}>
+                      Last 7 Days
+                    </DateRangePickerItem>
+                    <DateRangePickerItem
+                      key="mtd"
+                      value="mtd"
+                      from={new Date(yyyy, mm - 1, 1)}
+                      to={new Date(yyyy, mm - 1, dd)}
+                    >
+                      Month to Date
+                    </DateRangePickerItem>
+                    <DateRangePickerItem
+                      key="half"
+                      value="half"
+                      from={new Date(2023, 0, 1)}
+                      to={new Date(2023, 5, 31)}
+                    >
+                      Last 6 months
+                    </DateRangePickerItem>
+                    <DateRangePickerItem key="ytd" value="ytd" from={new Date(2023, 0, 1)}>
+                      Year to date
+                    </DateRangePickerItem>
+                  </DateRangePicker>
+
+                </div>
+                <div className='flex items-center'>
+                  <Text className='mr-2 flex-none'>Exclude</Text>
+                  <MultiSelect>
+                    <MultiSelectItem value="1">Recognition Posts</MultiSelectItem>
+                    <MultiSelectItem value="2">User Generated Content</MultiSelectItem>
+                    {/* <MultiSelectItem value="3">Home Page</MultiSelectItem> */}
+
+                  </MultiSelect>
+                </div>
+                <div className='flex items-center'>
+                  <Text className='mr-2 flex-none'>Workspace</Text>
+                  <Select value="1">
+                    <SelectItem value="1">
+                      All
+                    </SelectItem>
+                    <SelectItem value="2">
+                      Engage
+                    </SelectItem>
+                    <SelectItem value="3">
+                      Test Environment
+                    </SelectItem>
+                  </Select>
+                </div>
+
+              </Grid>
+              <Grid numItemsSm={1} numItemsMd={2} numItemsLg={3} className="gap-6 mt-6">
+                <Card className='flex flex-col justify-between lg:col-span-2'>
+                  {/* <Title>Active Users</Title> */}
+
+                  <Flex alignItems="start">
+                    <Text className="mb-2"><Bold>Active Users</Bold></Text>
+                  </Flex>
+                  <Flex className="space-x-3 truncate" justifyContent="start" alignItems="baseline">
+                    <Metric>{week ? 543 : 76}</Metric>
+                  </Flex>
                   <LineChart
                     className="mt-6"
-                    data={chartdata}
-                    index="year"
-                    categories={["Registered", "Logged In"]}
-                    colors={["emerald", "blue"]}
+                    data={week ? userLoginsWeek : userLoginsDay}
+                    index={week ? "day" : "hour"}
+                    categories={["Logged In", "Registered"]}
+                    colors={["emerald", "cyan"]}
                     // valueFormatter={dataFormatter}
                     yAxisWidth={40}
-                  />
-                </Card>
-                <Card className='flex flex-col justify-between'>
-                  <Title>Total Content Views</Title>
-                  <AreaChart
-                    className="h-72 mt-4"
-                    data={views}
-                    index="date"
-                    categories={["Views"]}
-                    colors={["indigo", "cyan"]}
+                    startEndOnly={week ? false : true}
                     showLegend={false}
+                    autoMinValue={true}
+                    curveType={week ? "linear" : "natural"}
                   />
-                </Card>
-              </Grid>
-            </TabPanel>
-          </TabPanels>
-        </TabGroup>
-        <TabGroup className="mt-6">
-          <TabPanels>
-            <TabPanel>
-              <Grid numItemsMd={2} numItemsLg={2} className="gap-6 mt-6">
-                <Card className='flex flex-col justify-between'>
-                  <Title>Content Popularity</Title>
-                  <Flex className="mt-4">
-                    <Text>
-                      <Bold>Item</Bold>
-                    </Text>
-                    <Text>
-                      <Bold>Visits</Bold>
-                    </Text>
-                  </Flex>
-                  <BarList data={data} className="mt-2" />
                 </Card>
                 <Card className='flex flex-col justify-between'>
                   <Title>Devices</Title>
@@ -326,19 +273,187 @@ function App() {
                   />
                 </Card>
               </Grid>
-            </TabPanel>
-          </TabPanels>
-        </TabGroup>
 
-        <TabGroup className="mt-6 mb-6">
-          <TabPanels>
-            <TabPanel>
               <Grid numItemsMd={2} numItemsLg={2} className="gap-6 mt-6">
+                <Card className='flex flex-col justify-between'>
+                  <Flex alignItems="start">
+                    <Text className="mb-2"><Bold>Content Views</Bold></Text>
+                  </Flex>
+                  <Flex className="space-x-3 truncate" justifyContent="start" alignItems="baseline">
+                    <Metric>{week ? 1568 : 369}</Metric>
+                  </Flex>
+                  <AreaChart
+                    className="h-72 mt-4"
+                    data={week ? viewsWeek : viewsDay}
+                    index={week ? "day" : "hour"}
+                    categories={["Views"]}
+                    colors={["indigo", "cyan"]}
+                    startEndOnly={week ? false : true}
+                    showLegend={false}
+                    curveType={week ? "linear" : "natural"}
+                    yAxisWidth={30}
+                  />
+                </Card>
+                <Card>
+                  <Title>Popular Content</Title>
+                  {/* <Flex alignItems="center" justifyContent="between">
+                    <Text className="text-base text-gray-700 font-medium">Top Pages</Text>
+                    <Text className="uppercase">Visitors</Text>
+                  </Flex> */}
+
+                  <TabGroup>
+                    <TabList className="mt-2">
+                      <Tab>Views</Tab>
+                      <Tab>Unique Views</Tab>
+                      <Tab>Likes</Tab>
+                      <Tab>Comments</Tab>
+                    </TabList>
+                    <TabPanels>
+                      <TabPanel>
+                        <BarList
+                          data={week ? popularContentWeek.slice(0, 5) : popularContentDay.slice(0, 5)}
+                          className="mt-8"
+                          showAnimation={false}
+                          valueFormatter={valueFormatter}
+                        />
+                        <Button
+                          icon={ExpandIcon}
+                          className="mt-4 w-full bg-white border-gray-200 text-gray-500 hover:bg-gray-50 hover:border-gray-300"
+                          onClick={openModal}
+                        >
+                          Show More
+                        </Button>
+                      </TabPanel>
+                    </TabPanels>
+                  </TabGroup>
+                </Card>
+              </Grid>
+              <Grid numItemsMd={2} numItemsLg={2} className="gap-6 mt-6">
+                <Transition appear show={isOpen} as={Fragment}>
+                  <Dialog as="div" className="relative z-50" onClose={closeModal}>
+                    <Transition.Child
+                      as={Fragment}
+                      enter="ease-out duration-300"
+                      enterFrom="opacity-0"
+                      enterTo="opacity-100"
+                      leave="ease-in duration-200"
+                      leaveFrom="opacity-100"
+                      leaveTo="opacity-0"
+                    >
+                      <div className="fixed inset-0 bg-gray-900 bg-opacity-25" />
+                    </Transition.Child>
+                    <div className="fixed inset-0 overflow-y-auto">
+                      <div className="flex min-h-full items-center justify-center p-4 text-center">
+                        <Transition.Child
+                          as={Fragment}
+                          enter="ease-out duration-300"
+                          enterFrom="opacity-0 scale-95"
+                          enterTo="opacity-100 scale-100"
+                          leave="ease-in duration-200"
+                          leaveFrom="opacity-100 scale-100"
+                          leaveTo="opacity-0 scale-95"
+                        >
+                          <Dialog.Panel
+                            className="w-full max-w-xl transform overflow-hidden ring-tremor bg-white
+                                    p-6 text-left align-middle shadow-tremor transition-all rounded-xl"
+                          >
+                            <Flex alignItems="center" justifyContent="between">
+                              <Text className="text-base text-gray-700 font-medium">Top Pages</Text>
+                              <Text className="uppercase">Views</Text>
+                            </Flex>
+                            <TextInput
+                              icon={SearchIcon}
+                              placeholder="Search..."
+                              className="mt-6"
+                              onChange={(event) => setSearchQuery(event.target.value)}
+                            />
+                            <div className="relative mt-4 h-[450px] overflow-y-scroll">
+                              <BarList
+                                data={filteredpages}
+                                className="mr-4 -mb-10" // to give room for scrollbar
+                                showAnimation={false}
+                                valueFormatter={valueFormatter}
+                              />
+                              <div className=" inset-x-0 bottom-0 p-6 bg-gradient-to-t from-white to-transparent h-20 sticky" />
+                            </div>
+                            <Button
+                              className="mt-2 w-full bg-white border-gray-200 text-gray-500 hover:bg-gray-50 hover:border-gray-300"
+                              onClick={closeModal}
+                            >
+                              Back
+                            </Button>
+                          </Dialog.Panel>
+                        </Transition.Child>
+                      </div>
+                    </div>
+                  </Dialog>
+                </Transition>
+              </Grid>
+
+              <Grid numItemsSm={2} numItemsLg={4} className="gap-6">
+                {blocks.map((item) => (
+                  <Card key={item.title}>
+                    <Flex alignItems="start">
+                      <Text className="mb-2">{item.title}</Text>
+                      {/* <BadgeDelta deltaType={item.deltaType}>{item.delta}</BadgeDelta> */}
+                    </Flex>
+                    <Flex className="space-x-3 truncate" justifyContent="start" alignItems="baseline">
+                      <Icon icon={item.icon} variant="light" size="xs" color="neutral" tooltip={`${item.metric} ${item.title}`} />
+                      <Metric>{item.metric}</Metric>
+                      {/* <Text>from {item.metricPrev}</Text> */}
+                    </Flex>
+                    <AreaChart
+                      className="h-28 mt-8"
+                      data={week ? blocksViewsWeek : blocksViewsDay}
+                      index={week ? "day" : "hour"}
+                      categories={["Views"]}
+                      colors={[`${item.graphColor}`]}
+                      startEndOnly={true}
+                      showLegend={false}
+                      showXAxis={week ? true : false}
+                      showYAxis={false}
+                      showGridLines={false}
+                      curveType="natural"
+
+                    />
+                  </Card>
+                ))}
+              </Grid>
+
+              <Grid numItemsMd={2} numItemsLg={2} className="gap-6 mt-6">
+                <Card>
+                  <Title>Popular Lists</Title>
+                  <TabGroup>
+                    <TabList className="mt-2">
+                      <Tab>Views</Tab>
+                      <Tab>Unique Views</Tab>
+                      <Tab>Likes</Tab>
+                      <Tab>Comments</Tab>
+                    </TabList>
+                    <TabPanels>
+                      <TabPanel>
+                        <BarList
+                          data={week ? popularContentWeek.slice(0, 5) : popularContentDay.slice(0, 5)}
+                          className="mt-8"
+                          showAnimation={false}
+                          valueFormatter={valueFormatter}
+                        />
+                        <Button
+                          icon={ExpandIcon}
+                          className="mt-4 w-full bg-white border-gray-200 text-gray-500 hover:bg-gray-50 hover:border-gray-300"
+                          onClick={openModal}
+                        >
+                          Show More
+                        </Button>
+                      </TabPanel>
+                    </TabPanels>
+                  </TabGroup>
+                </Card>
                 <Card className='flex flex-col justify-between'>
                   <Title>Groups Activity</Title>
                   <BarChart
                     className="mt-6"
-                    data={barchart}
+                    data={groups}
                     index="name"
                     categories={["Views", "Comments", "Likes"]}
                     colors={["blue", "indigo", "cyan"]}
@@ -346,21 +461,373 @@ function App() {
                   // showLegend={false}
                   />
                 </Card>
+              </Grid>
+
+            </TabPanel>
+            <TabPanel>
+              <Grid numItemsMd={2} numItemsLg={3} className="gap-6 mt-6">
+
+                <div className='flex items-center'>
+                  <Text className='mr-2 flex-none'>Show Inisghts for:</Text>
+
+                  <DateRangePicker
+                    className="max-w-md mx-auto"
+                    value={value}
+                    onValueChange={setValue}
+                    selectPlaceholder="Select"
+                    color="rose"
+                  >
+
+                    <DateRangePickerItem key="today" value="today" from={new Date()} to={new Date()} onClick={handleTodayClick}>
+                      Today
+                    </DateRangePickerItem>
+                    <DateRangePickerItem key="yesterday" value="yesterday" from={new Date(yyyy, mm - 1, dd - 1)} to={new Date(yyyy, mm - 1, dd)} onClick={handleDayClick}>
+                      Yesterday
+                    </DateRangePickerItem>
+                    <DateRangePickerItem key="7days" value="7days" from={new Date(yyyy, mm - 1, dd - 7)} onClick={handleWeekClick}>
+                      Last 7 Days
+                    </DateRangePickerItem>
+                    <DateRangePickerItem
+                      key="mtd"
+                      value="mtd"
+                      from={new Date(yyyy, mm - 1, 1)}
+                      to={new Date(yyyy, mm - 1, dd)}
+                    >
+                      Month to Date
+                    </DateRangePickerItem>
+                    <DateRangePickerItem
+                      key="half"
+                      value="half"
+                      from={new Date(2023, 0, 1)}
+                      to={new Date(2023, 5, 31)}
+                    >
+                      Last 6 months
+                    </DateRangePickerItem>
+                    <DateRangePickerItem key="ytd" value="ytd" from={new Date(2023, 0, 1)}>
+                      Year to date
+                    </DateRangePickerItem>
+                  </DateRangePicker>
+
+                </div>
+                <div className='flex items-center'>
+                  <Text className='mr-2 flex-none'>Compare Against:</Text>
+
+                  <DateRangePicker
+                    className="max-w-md mx-auto"
+                    value={value}
+                    onValueChange={setValue}
+                    selectPlaceholder="Select"
+                    color="rose"
+                  >
+
+                    <DateRangePickerItem key="today" value="today" from={new Date()} to={new Date()} onClick={handleTodayClick}>
+                      Today
+                    </DateRangePickerItem>
+                    <DateRangePickerItem key="yesterday" value="yesterday" from={new Date(yyyy, mm - 1, dd - 1)} to={new Date(yyyy, mm - 1, dd - 1)} onClick={handleDayClick}>
+                      Yesterday
+                    </DateRangePickerItem>
+                    <DateRangePickerItem key="7days" value="7days" from={new Date(yyyy, mm - 1, dd - 7)} onClick={handleWeekClick}>
+                      Last 7 Days
+                    </DateRangePickerItem>
+                    <DateRangePickerItem
+                      key="mtd"
+                      value="mtd"
+                      from={new Date(yyyy, mm - 1, 1)}
+                      to={new Date(yyyy, mm - 1, dd)}
+                    >
+                      Month to Date
+                    </DateRangePickerItem>
+                    <DateRangePickerItem
+                      key="half"
+                      value="half"
+                      from={new Date(2023, 0, 1)}
+                      to={new Date(2023, 5, 31)}
+                    >
+                      Last 6 months
+                    </DateRangePickerItem>
+                    <DateRangePickerItem key="ytd" value="ytd" from={new Date(2023, 0, 1)}>
+                      Year to date
+                    </DateRangePickerItem>
+                  </DateRangePicker>
+
+                </div>
+                <div className='flex items-center'>
+
+                </div>
+              </Grid>
+              <Grid numItemsMd={2} numItemsLg={3} className="gap-6 mt-6 border-b pb-4 mb-4">
+
+                <div className='flex items-center'>
+                  <Text className='mr-2 flex-none'>Content Items</Text>
+                  <MultiSelect>
+                    <MultiSelectItem value="1">"Share Your Best Logistics Success Story and Win Exciting Prizes!"</MultiSelectItem>
+                    <MultiSelectItem value="2">"Join the Fun: Logistics Trivia Challenge - Test Your Knowledge!"</MultiSelectItem>
+                    <MultiSelectItem value="3">"Calling All Logistics Enthusiasts: Submit Your Innovative Ideas for Process Improvement!"</MultiSelectItem>
+                    <MultiSelectItem value="4">"Logistics Photo Contest: Show Us Your Favorite On-the-Job Moments!"</MultiSelectItem>
+                    <MultiSelectItem value="5">"Employee Spotlight: Recognizing Outstanding Contributions in Logistics!"</MultiSelectItem>
+                    <MultiSelectItem value="6">"Get Active: Join our Logistics Step Challenge and Win Fitness Goodies!"</MultiSelectItem>
+                    <MultiSelectItem value="7">"Announcing the Logistics Book Club: Expand Your Knowledge and Join the Discussion!"</MultiSelectItem>
+                    <MultiSelectItem value="8">"Let's Celebrate! Join us for a Virtual Happy Hour with the Logistics Team!"</MultiSelectItem>
+                    <MultiSelectItem value="9">"Time to Unwind: Join our Logistics Gaming Tournament and Claim the Champion Title!"</MultiSelectItem>
+                    <MultiSelectItem value="10">"Spread the Joy: Share Heartwarming Customer Testimonials and Inspire Others!"</MultiSelectItem>
+                  </MultiSelect>
+                </div>
+                <div className='flex items-center'>
+                  <Text className='mr-2 flex-none'>User Groups</Text>
+                  <MultiSelect>
+                    <MultiSelectItem value="1">Global Team</MultiSelectItem>
+                    <MultiSelectItem value="2">Route Planners</MultiSelectItem>
+                    <MultiSelectItem value="3">Innovation Crew</MultiSelectItem>
+                    <MultiSelectItem value="4">Photo Enthusiasts</MultiSelectItem>
+                    <MultiSelectItem value="5">Supply Chain Heroes</MultiSelectItem>
+                    <MultiSelectItem value="6">Fitness Buddies</MultiSelectItem>
+                    <MultiSelectItem value="7">Book Clubbers</MultiSelectItem>
+                    <MultiSelectItem value="8">Virtual Hangout Group</MultiSelectItem>
+                    <MultiSelectItem value="9">Gaming Squad</MultiSelectItem>
+                    <MultiSelectItem value="10">Customer Support Team</MultiSelectItem>
+                  </MultiSelect>
+                </div>
+                <div className='flex items-center'>
+                  <Text className='mr-2 flex-none'>Workspace</Text>
+                  <Select value="1">
+                    <SelectItem value="1">
+                      All
+                    </SelectItem>
+                    <SelectItem value="2">
+                      Engage
+                    </SelectItem>
+                    <SelectItem value="3">
+                      Test Environment
+                    </SelectItem>
+                  </Select>
+                </div>
+
+              </Grid>
+
+              <Grid numItemsMd={2} numItemsLg={2} className="gap-6 mt-6">
                 <Card className='flex flex-col justify-between'>
-                  <Title>User Generated Content</Title>
+                  <Flex alignItems="start">
+                    <Text className="mb-2"><Bold>Content Views ({week ? 'July 9, 2023 - July 14 2023' : 'August 1, 2023'})</Bold></Text>
+                  </Flex>
+                  <Flex className="space-x-3 truncate" justifyContent="start" alignItems="baseline">
+                    <Metric>{week ? 1568 : 369}</Metric>
+                  </Flex>
                   <AreaChart
                     className="h-72 mt-4"
-                    data={ugc}
-                    index="date"
+                    data={week ? viewsWeek : viewsDay}
+                    index={week ? "day" : "hour"}
+                    categories={["Views"]}
+                    colors={["indigo", "cyan"]}
+                    startEndOnly={week ? false : true}
+                    showLegend={false}
+                    curveType={week ? "linear" : "natural"}
+                    yAxisWidth={30}
+                  />
+                </Card>
+                <Card className='flex flex-col justify-between'>
+                  <Flex alignItems="start">
+                    <Text className="mb-2"><Bold>Content Views ({week ? 'July 23, 2023 - July 28 2023' : 'July 30, 2023'})</Bold></Text>
+                  </Flex>
+                  <Flex className="space-x-3 truncate" justifyContent="start" alignItems="baseline">
+                    <Metric>{week ? 1343 : 401}</Metric>
+                  </Flex>
+                  <AreaChart
+                    className="h-72 mt-4"
+                    data={week ? viewsWeek2 : viewsDay2}
+                    index={week ? "day" : "hour"}
+                    categories={["Views"]}
+                    colors={["indigo", "cyan"]}
+                    startEndOnly={week ? false : true}
+                    showLegend={false}
+                    curveType={week ? "linear" : "natural"}
+                    yAxisWidth={30}
+                  />
+                </Card>
+              </Grid>
+
+              <Grid numItemsSm={2} numItemsLg={4} className="gap-6 mt-6">
+                {blocks.map((item) => (
+                  <Card key={item.title}>
+                    <Flex alignItems="start">
+                      <Text className="mb-2">{item.title}</Text>
+                      <BadgeDelta deltaType={item.deltaType}>{item.delta}</BadgeDelta>
+                    </Flex>
+                    <Flex className="space-x-3 truncate" justifyContent="start" alignItems="baseline">
+                      <Icon icon={item.icon} variant="light" size="xs" color="neutral" tooltip="Up 20" />
+                      <Metric>{item.metric}</Metric>
+                      <Text>vs. <Bold>{item.metricPrev}</Bold></Text>
+                    </Flex>
+                    {/* <AreaChart
+                      className="h-28 mt-8"
+                      data={week ? blocksViewsWeek : blocksViewsDay}
+                      index={week ? "day" : "hour"}
+                      categories={["Views"]}
+                      colors={[`${item.graphColor}`]}
+                      startEndOnly={true}
+                      showLegend={false}
+                      showXAxis={week ? true : false}
+                      showYAxis={false}
+                      showGridLines={false}
+                      curveType="natural"
+
+                    /> */}
+                  </Card>
+                ))}
+              </Grid>
+            </TabPanel>
+            <TabPanel>
+              3
+            </TabPanel>
+            <TabPanel>
+              4
+            </TabPanel>
+            <TabPanel>
+              <Grid numItemsMd={3} numItemsLg={3} className="gap-6 mt-6  border-b pb-4">
+
+                <div className='flex items-center'>
+                  <Text className='mr-2 flex-none'>Show Inisghts for</Text>
+
+                  {/* <DateRangePicker className="max-w-sm mx-auto" value="ytd"
+    onValueChange={setValue}
+  >
+    <DateRangePickerItem key="ytd" value="ytd" from={new Date().getDate()}>
+      Today
+    </DateRangePickerItem>
+    <DateRangePickerItem
+      key="half"
+      value="half"
+      from={new Date().getDate() - 2}
+      to={new Date().getDate() - 1}
+    >
+      Yesterday
+    </DateRangePickerItem>
+  </DateRangePicker> */}
+
+                  <DateRangePicker
+                    className="max-w-md mx-auto"
+                    value={value}
+                    onValueChange={setValue}
+                    selectPlaceholder="Select"
+                    color="rose"
+                  >
+
+                    <DateRangePickerItem key="today" value="today" from={new Date()} to={new Date()} onClick={handleTodayClick}>
+                      Today
+                    </DateRangePickerItem>
+                    <DateRangePickerItem key="yesterday" value="yesterday" from={new Date(yyyy, mm - 1, dd - 1)} to={new Date(yyyy, mm - 1, dd - 1)} onClick={handleDayClick}>
+                      Yesterday
+                    </DateRangePickerItem>
+                    <DateRangePickerItem key="7days" value="7days" from={new Date(yyyy, mm - 1, dd - 7)} onClick={handleWeekClick}>
+                      Last 7 Days
+                    </DateRangePickerItem>
+                    <DateRangePickerItem
+                      key="mtd"
+                      value="mtd"
+                      from={new Date(yyyy, mm - 1, 1)}
+                      to={new Date(yyyy, mm - 1, dd)}
+                    >
+                      Month to Date
+                    </DateRangePickerItem>
+                    <DateRangePickerItem
+                      key="half"
+                      value="half"
+                      from={new Date(2023, 0, 1)}
+                      to={new Date(2023, 5, 31)}
+                    >
+                      Last 6 months
+                    </DateRangePickerItem>
+                    <DateRangePickerItem key="ytd" value="ytd" from={new Date(2023, 0, 1)}>
+                      Year to date
+                    </DateRangePickerItem>
+                  </DateRangePicker>
+
+                </div>
+                <div className='flex items-center'>
+                  <Text className='mr-2 flex-none'>Exclude</Text>
+                  <MultiSelect>
+                    <MultiSelectItem value="1">Recognition Posts</MultiSelectItem>
+                    <MultiSelectItem value="2">User Generated Content</MultiSelectItem>
+                    {/* <MultiSelectItem value="3">Home Page</MultiSelectItem> */}
+
+                  </MultiSelect>
+                </div>
+                <div className='flex items-center'>
+                  <Text className='mr-2 flex-none'>Workspace</Text>
+                  <Select value="1">
+                    <SelectItem value="1">
+                      All
+                    </SelectItem>
+                    <SelectItem value="2">
+                      Engage
+                    </SelectItem>
+                    <SelectItem value="3">
+                      Test Environment
+                    </SelectItem>
+                  </Select>
+                </div>
+
+              </Grid>
+
+              <Grid numItemsMd={2} numItemsLg={2} className="gap-6 mt-6">
+                <Card className='flex flex-col justify-between'>
+                  <Flex alignItems="start">
+                    <Text className="mb-2"><Bold>Search Volume</Bold></Text>
+                  </Flex>
+                  <Flex className="space-x-3 truncate" justifyContent="start" alignItems="baseline">
+                    <Metric>{week ? 1568 : 369}</Metric>
+                  </Flex>
+                  <AreaChart
+                    className="h-72 mt-4"
+                    data={week ? viewsWeek : viewsDay}
+                    index={week ? "day" : "hour"}
                     categories={["Views"]}
                     colors={["cyan"]}
+                    startEndOnly={week ? false : true}
                     showLegend={false}
+                    curveType={week ? "linear" : "natural"}
+                    yAxisWidth={30}
                   />
+                </Card>
+                <Card>
+                  <Title>Top Search Terms</Title>
+                  {/* <Flex alignItems="center" justifyContent="between">
+                    <Text className="text-base text-gray-700 font-medium">Top Pages</Text>
+                    <Text className="uppercase">Visitors</Text>
+                  </Flex> */}
+
+                  <TabGroup>
+                    <TabList className="mt-2">
+                      <Tab>Search Terms</Tab>
+                      <Tab>Zero Result Searches</Tab>
+                    </TabList>
+                    <TabPanels>
+                      <TabPanel>
+                        <BarList
+                          data={searchTerms.slice(0, 5)}
+                          className="mt-8"
+                          showAnimation={false}
+                          valueFormatter={valueFormatter}
+                        />
+                        <Button
+                          icon={ExpandIcon}
+                          className="mt-4 w-full bg-white border-gray-200 text-gray-500 hover:bg-gray-50 hover:border-gray-300"
+                          onClick={openModal}
+                        >
+                          Show More
+                        </Button>
+                      </TabPanel>
+                    </TabPanels>
+                  </TabGroup>
                 </Card>
               </Grid>
             </TabPanel>
           </TabPanels>
         </TabGroup>
+        <div className="my-16 flex justify-center text-sm text-gray-400">
+          <p>© 2023 Thrive.App Ltd.</p>
+          <p className="mx-12">Privacy Policy</p>
+          <p>Terms and Conditions</p>
+        </div>
       </div>
     </div>
   );
