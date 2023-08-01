@@ -743,12 +743,18 @@ function App() {
 
                 </div>
                 <div className='flex items-center'>
-                  <Text className='mr-2 flex-none'>Exclude</Text>
+                  <Text className='mr-2 flex-none'>User Groups</Text>
                   <MultiSelect>
-                    <MultiSelectItem value="1">Recognition Posts</MultiSelectItem>
-                    <MultiSelectItem value="2">User Generated Content</MultiSelectItem>
-                    {/* <MultiSelectItem value="3">Home Page</MultiSelectItem> */}
-
+                    <MultiSelectItem value="1">Global Team</MultiSelectItem>
+                    <MultiSelectItem value="2">Route Planners</MultiSelectItem>
+                    <MultiSelectItem value="3">Innovation Crew</MultiSelectItem>
+                    <MultiSelectItem value="4">Photo Enthusiasts</MultiSelectItem>
+                    <MultiSelectItem value="5">Supply Chain Heroes</MultiSelectItem>
+                    <MultiSelectItem value="6">Fitness Buddies</MultiSelectItem>
+                    <MultiSelectItem value="7">Book Clubbers</MultiSelectItem>
+                    <MultiSelectItem value="8">Virtual Hangout Group</MultiSelectItem>
+                    <MultiSelectItem value="9">Gaming Squad</MultiSelectItem>
+                    <MultiSelectItem value="10">Customer Support Team</MultiSelectItem>
                   </MultiSelect>
                 </div>
                 <div className='flex items-center'>
