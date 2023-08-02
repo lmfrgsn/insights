@@ -2,7 +2,7 @@ import React, { Fragment, useState } from "react";
 
 import logo from './logo.svg';
 import {
-  Button, TextInput, Card, Text, Metric, Title, LineChart, DonutChart, AreaChart, BarChart, Grid, TabGroup, Tab, TabList, TabPanel, TabPanels, Flex, BarList, Bold, Legend, SelectItem, Select, DateRangePicker, DateRangePickerItem, Icon, MultiSelect, MultiSelectItem, BadgeDelta
+  Button, TextInput, Card, Text, Metric, Title, LineChart, DonutChart, AreaChart, BarChart, Grid, TabGroup, Tab, TabList, TabPanel, TabPanels, Flex, BarList, Bold, Legend, SelectItem, Select, DateRangePicker, DateRangePickerItem, Icon, MultiSelect, MultiSelectItem, BadgeDelta, ScatterChart
 } from "@tremor/react";
 import { Dialog, Transition } from "@headlessui/react";
 import { ExpandIcon, SearchIcon } from 'lucide-react';
@@ -13,7 +13,7 @@ import { viewsDay, viewsWeek, viewsDay2, viewsWeek2 } from "./data/views";
 import { blocks, blocksViewsDay, blocksViewsWeek } from "./data/blocks";
 import { searchTerms } from "./data/searchTerms";
 // import { ugc } from "./data/ugc";
-import { groups } from "./data/groups";
+import { groups, groupsScatter } from "./data/groups";
 import './App.css';
 
 const dataFormatter = (number) => `${Intl.NumberFormat("uk").format(number).toString()}%`;
@@ -207,7 +207,7 @@ function App() {
                     // valueFormatter={dataFormatter}
                     yAxisWidth={40}
                     startEndOnly={week ? false : true}
-                    showLegend={false}
+                    showLegend={true}
                     autoMinValue={true}
                     curveType={week ? "linear" : "natural"}
                   />
@@ -511,7 +511,7 @@ function App() {
                   </DateRangePicker>
 
                 </div>
-                
+
               </Grid>
               <Grid numItemsMd={2} numItemsLg={3} className="gap-6 mt-6 border-b pb-4 mb-4">
 
@@ -608,12 +608,14 @@ function App() {
                   <Card key={item.title}>
                     <Flex alignItems="start">
                       <Text className="mb-2">{item.title}</Text>
-                      <BadgeDelta deltaType={item.deltaType}>{item.delta}</BadgeDelta>
                     </Flex>
-                    <Flex className="space-x-3 truncate" justifyContent="start" alignItems="baseline">
+                    <Flex className="space-x-3 truncate mb-4" justifyContent="start" alignItems="baseline">
                       <Icon icon={item.icon} variant="light" size="xs" color="neutral" tooltip="Up 20" />
                       <Metric>{item.metric}</Metric>
                       <Text>vs. <Bold>{item.metricPrev}</Bold></Text>
+                    </Flex>
+                    <Flex alignItems="start">
+                      <BadgeDelta deltaType={item.deltaType}>{item.delta}</BadgeDelta>
                     </Flex>
                     {/* <AreaChart
                       className="h-28 mt-8"
@@ -634,12 +636,142 @@ function App() {
               </Grid>
             </TabPanel>
             <TabPanel>
-              3
+              {/* 
+            Group_Name: "New York Sales Team",
+      Members: 801,
+      Views: 76,
+      Likes: 134,
+      Comments: 34, */}
+
+              <Grid numItemsMd={3} numItemsLg={3} className="gap-6 mt-6  border-b pb-4">
+
+                <div className='flex items-center'>
+                  <Text className='mr-2 flex-none'>Show Inisghts for</Text>
+
+                  {/* <DateRangePicker className="max-w-sm mx-auto" value="ytd"
+    onValueChange={setValue}
+  >
+    <DateRangePickerItem key="ytd" value="ytd" from={new Date().getDate()}>
+      Today
+    </DateRangePickerItem>
+    <DateRangePickerItem
+      key="half"
+      value="half"
+      from={new Date().getDate() - 2}
+      to={new Date().getDate() - 1}
+    >
+      Yesterday
+    </DateRangePickerItem>
+  </DateRangePicker> */}
+
+                  <DateRangePicker
+                    className="max-w-md mx-auto"
+                    value={value}
+                    onValueChange={setValue}
+                    selectPlaceholder="Select"
+                    color="rose"
+                  >
+
+                    <DateRangePickerItem key="today" value="today" from={new Date()} to={new Date()} onClick={handleTodayClick}>
+                      Today
+                    </DateRangePickerItem>
+                    <DateRangePickerItem key="yesterday" value="yesterday" from={new Date(yyyy, mm - 1, dd - 1)} to={new Date(yyyy, mm - 1, dd - 1)} onClick={handleDayClick}>
+                      Yesterday
+                    </DateRangePickerItem>
+                    <DateRangePickerItem key="7days" value="7days" from={new Date(yyyy, mm - 1, dd - 7)} onClick={handleWeekClick}>
+                      Last 7 Days
+                    </DateRangePickerItem>
+                    <DateRangePickerItem
+                      key="mtd"
+                      value="mtd"
+                      from={new Date(yyyy, mm - 1, 1)}
+                      to={new Date(yyyy, mm - 1, dd)}
+                    >
+                      Month to Date
+                    </DateRangePickerItem>
+                    <DateRangePickerItem
+                      key="half"
+                      value="half"
+                      from={new Date(2023, 0, 1)}
+                      to={new Date(2023, 5, 31)}
+                    >
+                      Last 6 months
+                    </DateRangePickerItem>
+                    <DateRangePickerItem key="ytd" value="ytd" from={new Date(2023, 0, 1)}>
+                      Year to date
+                    </DateRangePickerItem>
+                  </DateRangePicker>
+
+                </div>
+                <div className='flex items-center'>
+                  <Text className='mr-2 flex-none'>Exclude</Text>
+                  <MultiSelect>
+                    <MultiSelectItem value="1">Recognition Posts</MultiSelectItem>
+                    <MultiSelectItem value="2">User Generated Content</MultiSelectItem>
+                    {/* <MultiSelectItem value="3">Home Page</MultiSelectItem> */}
+
+                  </MultiSelect>
+                </div>
+                <div className='flex items-center'>
+                  <Text className='mr-2 flex-none'>Workspace</Text>
+                  <Select value="1">
+                    <SelectItem value="1">
+                      All
+                    </SelectItem>
+                    <SelectItem value="2">
+                      Engage
+                    </SelectItem>
+                    <SelectItem value="3">
+                      Test Environment
+                    </SelectItem>
+                  </Select>
+                </div>
+
+              </Grid>
+              <Grid numItemsSm={1} numItemsMd={2} numItemsLg={3} className="gap-6 mt-6">
+                <Card className='flex flex-col justify-between lg:col-span-2'>
+                  <Title>Groups Activity</Title>
+                  <Text>The most active user groups, relative to their number of users.</Text>
+                  <ScatterChart
+                    className="h-80 mt-6 -ml-2"
+                    yAxisWidth={50}
+                    data={groupsScatter}
+                    category="Group_Name"
+                    x="Members"
+                    y="Views"
+                    size="Comments"
+                    showOpacity={true}
+                    // minYValue={60}
+                    // valueFormatter={{
+                    //   x: (amount) => `$${(amount / 1000).toFixed(1)}K`,
+                    //   y: (lifeExp) => `${lifeExp} yrs`,
+                    //   size: (population) => `${(population / 1000000).toFixed(1)}M people`,
+                    // }}
+                    showLegend={false}
+                    showXAxis={true}
+                    showYAxis={true}
+                  />
+                </Card>
+                <Card className='flex flex-col justify-between'>
+                  <Title>Most Active Groups</Title>
+                  <BarChart
+                    className="mt-6"
+                    data={groups}
+                    index="name"
+                    categories={["Views", "Comments", "Likes"]}
+                    colors={["blue", "indigo", "cyan"]}
+                    yAxisWidth={48}
+                  // showLegend={false}
+                  />
+                </Card>
+              </Grid>
+
             </TabPanel>
             <TabPanel>
               4
             </TabPanel>
             <TabPanel>
+
               <Grid numItemsMd={3} numItemsLg={3} className="gap-6 mt-6  border-b pb-4">
 
                 <div className='flex items-center'>
