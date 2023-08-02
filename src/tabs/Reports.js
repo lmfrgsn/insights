@@ -1,5 +1,3 @@
-import React, { useState } from "react";
-
 import {
     Card, Text, Bold, Grid, Button
 } from "@tremor/react";

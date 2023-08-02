@@ -8,7 +8,7 @@ import { groups, groupsScatter } from "../data/groups";
 
 export default function Groups() {
 
-    const [week, setWeek] = useState('false');
+    const [setWeek] = useState('false');
 
     const [value, setValue] = useState({
         from: new Date(2023, 1, 1),

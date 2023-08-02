@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 
 import {
-    Button, Card, Text, Metric, AreaChart, Grid, Flex, Bold, SelectItem, Select, DateRangePicker, DateRangePickerItem, Icon, MultiSelect, MultiSelectItem, BadgeDelta
+    Card, Text, Metric, AreaChart, Grid, Flex, Bold, SelectItem, Select, DateRangePicker, DateRangePickerItem, Icon, MultiSelect, MultiSelectItem, BadgeDelta
 } from "@tremor/react";
 // import { Dialog, Transition } from "@headlessui/react";
 // import { ExpandIcon, SearchIcon } from 'lucide-react';
-import { popularContentDay, popularContentWeek } from "../data/popularContent";
-import { userLoginsWeek, userLoginsDay } from "../data/userLogins";
+import { popularContentDay } from "../data/popularContent";
+import { userLoginsDay } from "../data/userLogins";
 import { viewsDay, viewsWeek, viewsDay2, viewsWeek2 } from "../data/views";
 import { blocks, blocksViewsDay } from "../data/blocks";
 

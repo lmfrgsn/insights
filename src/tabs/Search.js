@@ -3,11 +3,11 @@ import React, { useState } from "react";
 import {
     Button, Card, Text, Metric, Title, AreaChart, Grid, TabGroup, Tab, TabList, TabPanel, TabPanels, Flex, BarList, Bold, SelectItem, Select, DateRangePicker, DateRangePickerItem, MultiSelect, MultiSelectItem
 } from "@tremor/react";
-import { Dialog, Transition } from "@headlessui/react";
-import { ExpandIcon, SearchIcon } from 'lucide-react';
+// import { Dialog, Transition } from "@headlessui/react";
+import { ExpandIcon } from 'lucide-react';
 import { popularContentDay } from "../data/popularContent";
 import { userLoginsDay } from "../data/userLogins";
-import { viewsDay, viewsWeek, viewsDay2, viewsWeek2 } from "../data/views";
+import { viewsDay, viewsWeek } from "../data/views";
 import { blocksViewsDay } from "../data/blocks";
 import { searchTerms } from "../data/searchTerms";
 
@@ -15,12 +15,7 @@ const valueFormatter = (number) => `${Intl.NumberFormat("uk").format(number).toS
 
 export default function Search() {
 
-    const [isOpen, setIsOpen] = useState(false);
-    const [searchQuery, setSearchQuery] = useState("");
-    const filteredpages = popularContentDay.filter((item) =>
-        item.name.toLowerCase().includes(searchQuery.toLowerCase()),
-    );
-    const closeModal = () => setIsOpen(false);
+    const [setIsOpen] = useState(false);
 
     const openModal = () => setIsOpen(true);
 
