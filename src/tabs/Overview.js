@@ -63,10 +63,10 @@ export default function Overview() {
     function handleTodayClick() {
         setWeek(false);
 
-        viewsDay.length = 16;
-        popularContentDay.length = 16;
-        userLoginsDay.length = 16;
-        blocksViewsDay.length = 16;
+        viewsDay.length = 12;
+        popularContentDay.length = 12;
+        userLoginsDay.length = 12;
+        blocksViewsDay.length = 12;
 
     };
 

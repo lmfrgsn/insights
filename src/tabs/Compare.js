@@ -9,6 +9,7 @@ import { popularContentDay } from "../data/popularContent";
 import { userLoginsDay } from "../data/userLogins";
 import { viewsDay, viewsWeek, viewsDay2, viewsWeek2 } from "../data/views";
 import { blocks, blocksViewsDay } from "../data/blocks";
+// import { compareViewsDay, compareViewsWeek } from "../data/compare";
 
 export default function Overview() {
 
@@ -251,19 +252,19 @@ export default function Overview() {
                             <BadgeDelta deltaType={item.deltaType}>{item.delta}</BadgeDelta>
                         </Flex>
                         {/* <AreaChart
-      className="h-28 mt-8"
-      data={week ? blocksViewsWeek : blocksViewsDay}
-      index={week ? "day" : "hour"}
-      categories={["Views"]}
-      colors={[`${item.graphColor}`]}
-      startEndOnly={true}
-      showLegend={false}
-      showXAxis={week ? true : false}
-      showYAxis={false}
-      showGridLines={false}
-      curveType="natural"
+                            className="h-28 mt-8"
+                            data={week ? compareViewsWeek : compareViewsDay}
+                            index={week ? "day" : "hour"}
+                            categories={week ? ["This_Week", "Last_Week"] : ["Today", "Yesterday"]}
+                            colors={['green', 'blue']}
+                            startEndOnly={true}
+                            showLegend={false}
+                            showXAxis={week ? true : false}
+                            showYAxis={false}
+                            showGridLines={false}
+                            curveType="natural"
 
-    /> */}
+                        /> */}
                     </Card>
                 ))}
             </Grid>

@@ -79,7 +79,6 @@ export default function Search() {
                         selectPlaceholder="Select"
                         color="rose"
                     >
-
                         <DateRangePickerItem key="today" value="today" from={new Date()} to={new Date()} onClick={handleTodayClick}>
                             Today
                         </DateRangePickerItem>
